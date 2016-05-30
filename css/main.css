@@ -1,0 +1,125 @@
+
+/* header */
+#chek-user{
+	background-color: #4B5658;
+	padding: 20px 20px 20px 0;
+	min-width: 320px;
+}
+
+#chek-user span{
+	color: #fff;
+}
+
+/* messages */
+#messages-wrapper{
+	margin: 20px auto;
+	min-width: 320px;
+	background-color: #ECE9E4;
+	overflow: hidden;
+	margin-top: 0;
+	color: #4B5658;
+}
+#messages-wrapper .pagination>.active>a{
+	background-color: #4B5658;
+	border-color: #4B5658;
+	color: #fff;
+}
+#messages-wrapper .pagination>li>a{
+	color: #4B5658;
+}
+
+
+
+#messages-wrapper h1{
+	margin-left: 10%;
+}
+
+/* message/answer forms */
+#messages-wrapper form{
+	display: none;
+}
+
+#messages-wrapper .message-wrapper form{
+	text-align: left;
+}
+
+
+/* message */
+#messages-wrapper .message-wrapper{
+	clear: both;
+	position: relative;
+}
+#messages-wrapper .message-wrapper .user-message{
+	line-height: 50px;
+	margin-left: 60px;
+}
+
+#messages-wrapper p{
+	text-align: left;
+}
+
+#messages-wrapper > div.message-wrapper{
+	border-top: 1px solid #A7A29C;
+	clear: both;
+}
+
+#messages-wrapper > div.message-wrapper:first-child{
+	border-top: none;
+}
+
+
+#messages-wrapper > .message-wrapper{
+	margin: 5px 0 0 10px;
+	padding: 10px 5px;
+}
+
+#messages-wrapper .user-info{
+	margin-left: 60px;
+}
+
+#messages-wrapper > .message-wrapper .message-head img{
+	width: 50px;
+	 border: .1px solid rgba(75, 86, 88, .4); 
+	box-shadow:   0 1px 4px rgba(75, 86, 88, .6);
+}
+
+
+#toggle-new-message, .log-in-message{
+	margin-bottom: 10px;
+	cursor: pointer;
+	opacity: .7;
+	transition: opacity .2s;
+}
+
+#toggle-new-message, .log-in-message:hover{
+	opacity: 1;
+}
+
+
+/* answer */
+#messages-wrapper .answer{
+	border: .1px solid rgba(75, 86, 88, .1); 
+	box-shadow:
+   0 1px 4px rgba(75, 86, 88, .2),
+   -23px 0 20px -23px rgba(75, 86, 88, .8),
+   23px 0 20px -23px rgba(75, 86, 88, .8),
+   0 0 20px rgba(75, 86, 88, .1) inset;
+   padding: 5px;
+   margin-left: 5%;
+   overflow: hidden;
+	border-radius: 10px;
+}
+
+#messages-wrapper .answer h4{
+	text-align: right;
+	margin-right: 10%;
+}
+
+form div.error{
+	color: #a94442;
+	margin-left: 5%;
+}
+
+new-message-form div.form-group{
+	margin-top: 5px;
+}

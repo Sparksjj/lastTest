@@ -1,0 +1,15 @@
+<form method="POST" id="new-message-form">
+  <div class="form-group">
+    <label for="title">Заголовок</label>
+    <input type="text" class="form-control" id="title" name="title">
+  </div>
+  <div class="form-group">
+    <label for="message">Сообщение</label>
+    <textarea class="form-control" rows="3" id="message" name="message"></textarea>
+  </div>
+  <button type="submit" class="btn btn-default" ng-click="sendNewMessage($event, 'new-mess')" >Отправить</button>
+</form>
+
+<button type="button" class="btn btn-default pull-right" ng-click="showForm($event)" id="toggle-new-message" ng-if="isSignedIn()">Новое сообщение</button>
+
+<div class="log-in-message pull-right" data-toggle="modal" data-target="#log-in" ng-if="!isSignedIn()">Войдите в систему, чтобы оставить отзыв</div>
