@@ -12,6 +12,14 @@ function($scope, authorizationFactory, validateSignIn, $rootScope){
     };
 
     authorizationFactory.login($scope.formInfo.email, $scope.formInfo.password)
+
+  }
+
+  $scope.chek = function(){
+    console.log($scope.formInfo['new-password'])
+    console.log($scope.formInfo['new-name'])
+    console.log($scope.formInfo['new-email'])
+    console.log($scope.formInfo['new-file'])
   }
 
   $scope.logOutClick = function($event){

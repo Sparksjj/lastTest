@@ -9,7 +9,11 @@ app.factory("getRequests", function($http){
     },
 
     getMessages: function(timestamp, Scallback, Ecallback){
-      return $http.get('easy-serv.php?polling=messages&timestamp='+timestamp).then(Scallback, Ecallback);
+      return  $http({
+                method: 'GET',
+                url: 'http://push.cpl.by/api/v1/comment?api_token=UU9quUHYgR84bT1LusQw',
+                data: {'api_token': 'UU9quUHYgR84bT1LusQw'}
+              }).then(Scallback, Ecallback);
     },
 
     getAnswers: function(timestamp, Scallback, Ecallback){

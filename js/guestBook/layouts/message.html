@@ -1,16 +1,18 @@
 <div class="container message-head" data-user-id="{{user.id}}">
-  <img ng-src="{{user.avatar}}" alt="avatar" class="img-circle pull-left">
+  <img ng-src="{{'http://push.cpl.by'+mess.user.avatar}}" alt="avatar" class="img-circle pull-left">
   <div class="user-message">
-    <span class="name" ng-bind="user.name"></span>
-    <span class="email" ng-bind="user.email"></span>
+    <aside class="destroy-message">X</aside>
+    <span class="name" ng-bind="mess.user.name"></span>
+    <span class="email" ng-bind="mess.user.email"></span>
   </div>
 </div>
 
 <div class="message text-center" data-message-id="{{mess.id}}">
   <h4 ng-bind="mess.title"></h4>
-  <p ng-bind="mess.mess">
+  <p ng-bind="mess.message">
   </p>
 </div>
+<aside class="create-date">Созданно <span ng-bind="mess['created_at']">дата</span></aside>
 
 <div class="message-controll text-right" ng-if="isAdmin() && !answer(mess)">
   <form method="POST">

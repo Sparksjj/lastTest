@@ -9,6 +9,17 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
     answers: 0
   }
 
+
+ $http({
+  method: 'GET',
+  url: 'http://push.cpl.by/api/v1/comment?api_token=UU9quUHYgR84bT1LusQw',
+  data: {'api_token': 'UU9quUHYgR84bT1LusQw'}
+}).then(function(responce){
+      console.log(responce.data);
+    }, function(){
+      //do sms an error
+});  
+
 getRequests.getUsers().then(function(responce){
       $scope.users = responce.data;
     }, function(){
@@ -20,12 +31,12 @@ $scope.chekMessages = function(){
   getRequests.getMessages($scope.timestamp.messages).then(function(responce){
     /*север периодически отдает текст ошибки о таймауте запросса*/
     try{    
-      var ss = responce.data.slice(1, -10);
-      $scope.messages = JSON.parse(ss); 
-      $scope.timestamp.messages = responce.data.substr(-10);
-      $scope.chekMessages();
+      
+      $scope.messages = responce.data; 
+      
+     /* $scope.chekMessages();*/
     }catch(e){      
-      $scope.chekMessages();
+      /*$scope.chekMessages();*/
     }
 
     }, function(){

@@ -18,7 +18,36 @@
 	overflow: hidden;
 	margin-top: 0;
 	color: #4B5658;
+	position: relative;
 }
+#messages-wrapper .destroy-message{
+	position: absolute;
+	
+}
+#messages-wrapper .destroy-message{
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	cursor: pointer;
+	background-color: #4B5658;
+	color: #fff;
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	text-align: center;
+	opacity: .6;
+	border-radius: 50%;
+}
+
+#messages-wrapper .create-date{
+	font-style: italic;
+	font-size: .8em;
+}
+
+#messages-wrapper .destroy-message:hover{
+	opacity: 1;
+}
+
 #messages-wrapper .pagination>.active>a{
 	background-color: #4B5658;
 	border-color: #4B5658;

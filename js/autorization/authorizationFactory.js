@@ -3,27 +3,27 @@ app.factory('authorizationFactory',['$userProvider', '$http', 'validateSignIn', 
    
     var login = function(login, pass, $event){
 
-      $http.get('easy-serv.php?email='+login+'&password='+pass).success(function(data, status, headers, config){
-        
-        if (data != '') {
-          data = JSON.parse("{"+data+"}");
-          if (data.admin) {
-            $userProvider.setUser({id: data.id, login: data.name, email: data.email, roles: $userProvider.rolesEnum.admin});
+      $http({
+        method: 'POST',
+        url: 'http://push.cpl.by/auth/login',
+        data: {'email': login, 'password': pass}
+      }).then(function(response){
+
+        if (response.data.is_admin) {
+            $userProvider.setUser({id: response.data.id, login: response.data.name, email: response.data.email, roles: $userProvider.rolesEnum.admin, token: response.data.api_token});
           }else{
-            $userProvider.setUser({id: data.id, login: data.name, email: data.email, roles: $userProvider.rolesEnum.user});
+            $userProvider.setUser({id: response.data.id, login: response.data.name, email: response.data.email, roles: $userProvider.rolesEnum.user, token: response.data.api_token});
           };
           $rootScope.$emit('rootScope.signInSuccess');
-          
-        }else{
 
-          validateSignIn.chekUserInput($event, '', '', "Неверный логин или пароль")
-        }
-        
-      })
- 
- 
-    }
-    
+      }, function(err){
+        validateSignIn.chekUserInput($event, '', '', "Неверный логин или пароль")
+      }).catch(function(err) {
+        errorHandler(err);
+      });
+}
+
+
     var logOut = function(){
       localStorage.removeItem('currentUser');
     }
