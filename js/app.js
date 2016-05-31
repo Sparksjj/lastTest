@@ -6,6 +6,10 @@ var app = angular.module("myApp", ['ngRoute', 'angularUtils.directives.dirPagina
               templateUrl: 'views/guestbook.html',
               controller: 'GuestbookController',
           })
+          .when('/testpage', {
+              templateUrl: 'views/testPage.html',
+              controller: 'GuestbookController',
+          })
           .otherwise({ 
             redirectTo: '/'
           });
@@ -19,7 +23,6 @@ delete $httpProvider.defaults.headers.common["X-Requested-With"];
 ]);*/
 app.controller('appCtrl', ['$scope', '$location', '$userProvider', "$http",
     function($scope, $location, $userProvider, $http) {
-
 
 
     }]);
@@ -42,34 +45,40 @@ app.directive('fileModel', ['$parse', function ($parse) {
 
 app.service('fileUpload', ['$http', function ($http) {
     this.uploadFileToUrl = function(file, email, password, name){
-      console.log(file);
-      console.log(email);
-      console.log(password);
-      console.log(name);
 
-        var fd = new FormData();
-        fd.append('file', file);
-        console.log(fd);
-        $http({
+        var formData = new FormData();
+        formData.append("avatar", file)
+        formData.append("email", email)
+        formData.append("name", name)
+        formData.append("password", password)
+
+      $.ajax({
+        type: "POST",
+        processData: false,
+        contentType: false,
+        url: "http://push.cpl.by/auth/register",
+        data:  formData 
+      })
+      .done(function( data ) {
+                       
+      });
+   
+/*        $http({
             method: 'POST',
-            url: 'http://push.cpl.by/auth/register',
-            
-            data: {
-              "email": email,
-              "password": password,
-              "name": name,
-              "avatar": file
+            headers: {
+                'Content-Type': 'multipart/form-data'
             },
-
-            transformRequest: angular.identity,
-            processData: false,
-
-            headers: {'Content-Type': "multipart/form-data"}
+            url: 'http://push.cpl.by/auth/register',
+          
+            data: {
+              filee: file
+            },
+            
         }).then(function(response){
           console.log(response);
         }, function(err){
 
-        })
+        })*/
 
     }
 }]);

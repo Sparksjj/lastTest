@@ -34,7 +34,7 @@ $scope.chekMessages = function(){
   getRequests.getMessages($scope.timestamp.messages).then(function(responce){
     /*север периодически отдает текст ошибки о таймауте запросса*/
     try{    
-      
+      console.log(responce)
       $scope.messages = responce.data; 
 
       $scope.messages.data.forEach(function(elem){
