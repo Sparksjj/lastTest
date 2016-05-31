@@ -1,17 +1,20 @@
 /*for validation mess/answ forms*/
 app.factory("validateForm", function(){
 
-  var validateMessAnsw = function($event){
+  var validateMessAnsw = function($event, type){
 
     var button      = $event.target;
     var form      = $(button).parent();
 
+    
     var titleForm     = form.find("div.form-group").eq(0);
-    var titleText     = titleForm.find("input").val();
+    /*answer nven't title and we add "answer" for validate*/
+    var titleText     = type == 'new-mess' ? titleForm.find("input").val() : "answer";
 
-    var messageForm   = form.find("div.form-group").eq(1);
+
+    var messageForm   = form.find("div.form-group");
     var messageText   = messageForm.find("textarea").val();
-
+  
     var titleError    = form.find('div.title-error');
     var messageError  = form.find('div.message-error');
 

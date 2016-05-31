@@ -1,26 +1,24 @@
 <div class="container message-head" data-user-id="{{user.id}}">
   <img ng-src="{{'http://push.cpl.by'+mess.user.avatar}}" alt="avatar" class="img-circle pull-left">
   <div class="user-message">
-    <aside class="destroy-message">X</aside>
+    <aside class="destroy-message" ng-if="isItMy(mess.user.id)" ng-click="destroyMess($event)">X</aside>
     <span class="name" ng-bind="mess.user.name"></span>
     <span class="email" ng-bind="mess.user.email"></span>
   </div>
 </div>
 
-<div class="message text-center" data-message-id="{{mess.id}}">
+<div class="message text-center" data-message-id="{{mess.comment_id}}">
   <h4 ng-bind="mess.title"></h4>
   <p ng-bind="mess.message">
   </p>
 </div>
+
 <aside class="create-date">Созданно <span ng-bind="mess['created_at']">дата</span></aside>
 
 <div class="message-controll text-right" ng-if="isAdmin() && !answer(mess)">
   <form method="POST">
-    <div class="form-group">
-      <label for="title">Заголовок</label>
-      <input type="text" class="form-control" id="title" name="title">
-    </div>
-    <div class="form-group">
+
+    <div class="form-group textarea">
       <label for="message">Сообщение</label>
       <textarea class="form-control" rows="3" id="message" name="message"></textarea>
     </div>
@@ -30,8 +28,9 @@
 
 </div>
 	
-	<div class="answer text-center" ng-if="answer(mess)">
-	  <h4 ng-bind="answer(mess).title"></h4>
-	  <p ng-bind="answer(mess).mess">
-	  </p>
-	</div>
+<div class="answer text-center" ng-if="answer(mess)" style="margin-top: 10px" data-answer-id="{{answer(mess).id}}">
+  <aside ng-if="isAdmin()" ng-click="destroyAnswer($event)" class="destroy-answer">X</aside>
+	<h4>Ответ администратора</h4>
+	<p ng-bind="answer(mess).message"></p>
+  <aside style="text-align: left" class="create-date">Созданно <span ng-bind="answer(mess).updated_at">дата</span>
+</div>

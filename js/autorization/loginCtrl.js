@@ -1,9 +1,13 @@
-app.controller('loginCtrl', ['$scope', 'authorizationFactory', 'validateSignIn', '$rootScope',
-function($scope, authorizationFactory, validateSignIn, $rootScope){
+app.controller('loginCtrl', ['$scope', 'authorizationFactory', 'validateSignIn', '$rootScope', 'fileUpload',
+function($scope, authorizationFactory, validateSignIn, $rootScope, fileUpload){
   $scope.formInfo = {
     email: "",
     password: ""
   } 
+
+$('input[type=file]').change(function(){
+    $scope.file = this.files[0];
+});
 
   $scope.loginClick = function($event) {
 
@@ -16,10 +20,16 @@ function($scope, authorizationFactory, validateSignIn, $rootScope){
   }
 
   $scope.chek = function(){
-    console.log($scope.formInfo['new-password'])
-    console.log($scope.formInfo['new-name'])
-    console.log($scope.formInfo['new-email'])
-    console.log($scope.formInfo['new-file'])
+
+      var file = $scope.myFile;
+      console.log('file is ' );
+      console.dir(file);
+      var uploadUrl = "/fileUpload";/*
+      console.log($scope.formInfo['new-email']);
+      console.log($scope.formInfo['new-password']);
+      console.log($scope.formInfo['new-name']);
+*/
+      fileUpload.uploadFileToUrl(file, $scope.formInfo['new-email'], $scope.formInfo['new-password'], $scope.formInfo['new-name']);
   }
 
   $scope.logOutClick = function($event){

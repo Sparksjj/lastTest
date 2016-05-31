@@ -24,7 +24,8 @@
 	position: absolute;
 	
 }
-#messages-wrapper .destroy-message{
+#messages-wrapper .destroy-message, 
+#messages-wrapper .destroy-answer {
 	position: absolute;
 	right: 10px;
 	top: 10px;
@@ -34,9 +35,15 @@
 	width: 20px;
 	height: 20px;
 	line-height: 20px;
-	text-align: center;
+	text-align: left;
+	padding-left: 6px; 
 	opacity: .6;
 	border-radius: 50%;
+	font-size: 12px;
+}
+#messages-wrapper .destroy-answer {
+	left: 7px;
+	top: 10px;
 }
 
 #messages-wrapper .create-date{
@@ -44,7 +51,9 @@
 	font-size: .8em;
 }
 
-#messages-wrapper .destroy-message:hover{
+#messages-wrapper .destroy-message:hover,
+#messages-wrapper .destroy-answer:hover
+{
 	opacity: 1;
 }
 
@@ -137,6 +146,7 @@
    margin-left: 5%;
    overflow: hidden;
 	border-radius: 10px;
+	position: relative;
 }
 
 #messages-wrapper .answer h4{

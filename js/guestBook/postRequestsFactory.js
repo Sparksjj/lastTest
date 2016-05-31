@@ -1,14 +1,26 @@
 /*for post requests*/
 app.factory("postRequests", function($http){
 
-  var postRequests = {
-    post: function(data){
-      return $http.post('easy-serv.php', data).success(function(data, status, headers, config){
-                data;
-              })
-    }
+  var postRequestsMess = {
+    postMessage: function(messData){
+    	
+      return $http({
+      	method: "POST",
+      	url: 'http://push.cpl.by/api/v1/comment',
+      	data: messData
+      })
+    },
+
+    postAnswer: function(answerData, messId){
+    	console.log(messId);
+      return $http({
+      	method: "POST",
+      	url: 'http://push.cpl.by/api/v1/comment/'+messId+'/answer',
+      	data: answerData
+      })
+    },
   }
 
-  return postRequests;
+  return postRequestsMess;
 
 })

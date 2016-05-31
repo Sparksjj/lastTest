@@ -9,18 +9,19 @@ app.factory('authorizationFactory',['$userProvider', '$http', 'validateSignIn', 
         data: {'email': login, 'password': pass}
       }).then(function(response){
 
-        if (response.data.is_admin) {
+        
+        if (response.data.is_admin == 1) {
+          console.log("ad");
             $userProvider.setUser({id: response.data.id, login: response.data.name, email: response.data.email, roles: $userProvider.rolesEnum.admin, token: response.data.api_token});
           }else{
+            console.log("us");
             $userProvider.setUser({id: response.data.id, login: response.data.name, email: response.data.email, roles: $userProvider.rolesEnum.user, token: response.data.api_token});
           };
           $rootScope.$emit('rootScope.signInSuccess');
 
       }, function(err){
         validateSignIn.chekUserInput($event, '', '', "Неверный логин или пароль")
-      }).catch(function(err) {
-        errorHandler(err);
-      });
+      })
 }
 
 
