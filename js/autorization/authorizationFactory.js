@@ -11,19 +11,30 @@ app.factory('authorizationFactory',['$userProvider', '$http', 'validateSignIn', 
 
         
         if (response.data.is_admin == 1) {
-          console.log("ad");
-            $userProvider.setUser({id: response.data.id, login: response.data.name, email: response.data.email, roles: $userProvider.rolesEnum.admin, token: response.data.api_token});
+            $userProvider.setUser({avatar: response.data.avatar, id: response.data.id, name: response.data.name, email: response.data.email, roles: $userProvider.rolesEnum.admin, token: response.data.api_token});
           }else{
-            console.log("us");
-            $userProvider.setUser({id: response.data.id, login: response.data.name, email: response.data.email, roles: $userProvider.rolesEnum.user, token: response.data.api_token});
+            $userProvider.setUser({avatar: response.data.avatar, id: response.data.id, name: response.data.name, email: response.data.email, roles: $userProvider.rolesEnum.user, token: response.data.api_token});
           };
           $rootScope.$emit('rootScope.signInSuccess');
 
       }, function(err){
         validateSignIn.chekUserInput($event, '', '', "Неверный логин или пароль")
       })
-}
+      
+    }   
 
+    var loginNewUser = function(data){
+        
+        if (data.is_admin == 1) {
+          console.log("ad");
+            $userProvider.setUser({id: data.id, login: data.name, email: data.email, roles: $userProvider.rolesEnum.admin, token: data.api_token});
+          }else{
+            console.log("us");
+            $userProvider.setUser({id: data.id, login: data.name, email: data.email, roles: $userProvider.rolesEnum.user, token: data.api_token});
+          };
+          $rootScope.$emit('rootScope.signInSuccess');
+
+    }
 
     var logOut = function(){
       localStorage.removeItem('currentUser');
@@ -68,7 +79,8 @@ app.factory('authorizationFactory',['$userProvider', '$http', 'validateSignIn', 
       isAdmin:      isAdmin,
       isSignedIn:   isSignedIn,
       currentUser:  currentUser,
-      sayHi:        sayHi
+      sayHi:        sayHi,
+      loginNewUser: loginNewUser
     }
 
 }]);

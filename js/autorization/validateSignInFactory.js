@@ -37,8 +37,32 @@ app.factory('validateSignIn', function(){
 		
 	}
 
+	var	validatNewUser = function(email, password, name, file){
+		if(email != "" && password != "" && name != ""){
+			return false;
+		}
+		return true;	
+	}
+
+	var	chekFile = function(file){
+		allowFormats = ["image/jpeg", "image/bpn", "image/png"];
+
+/*    console.log(allowFormats.indexOf($scope.file.type));*/
+    	if (!file) {
+    	  return "Выберите файл (jpeg,bmp,png)";
+    	}else{
+    	  if (allowFormats.indexOf(file.type) == -1) {
+    	    return "Не верный формат выберите jpeg, bmp, png";
+    	    
+    	  };
+    	  return false
+    	};	
+	}
+
 	return {
 		chekUserInput: chekUserInput,
-		calearData: calearData
+		calearData: calearData,
+		validatNewUser: validatNewUser,
+		chekFile: chekFile
 	};
 });

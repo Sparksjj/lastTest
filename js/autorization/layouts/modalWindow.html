@@ -8,7 +8,7 @@
           </div>
 
           <div class="modal-body text-center">            
-            <form class="form-inline">
+            <form class="form-inline" name="login">
             <h4 id="error-message"></h4>
               <div class="form-group" id="inputEmail">
                 <label class="sr-only" for="inputEmail">Email</label>
@@ -30,6 +30,7 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->  
 
+
     <!-- modal-window sign-in-->
     <div class="modal fade" tabindex="-1" role="dialog" id="sign-in">
       <div class="modal-dialog">
@@ -39,33 +40,48 @@
             <h4 class="modal-title text-center">Вход</h4>
           </div>
 
-          <div class="modal-body text-center">            
-            <form class="form-group">
-            <h4 id="error-message"></h4>
-
+          <div class="modal-body text-center">     
+            <div class="server-erorr-message" ng-bind="serverError"></div>       
+            <form class="form-group" name="newUserForm">                        
+              
               <div class="form-group" id="inputEmail">
-                <label class="sr-only" for="inputEmail">Имя</label>
-                <input type="text" class="form-control" placeholder="Имя" name="email" ng-model="formInfo['new-name']">
-              </div>
+                <div ng-show="showError(newUserForm['new-email'], 'pattern')" class="help-inline">Неверный email (user@mail.ru)</div>
+                <div ng-show="showError(newUserForm['new-email'], 'required')" class="info-inline">Email (обязателен для заполнения)</div>
 
-              <div class="form-group" id="inputEmail">
                 <label class="sr-only" for="inputEmail">Email</label>
-                <input type="text" class="form-control" placeholder="Email" name="email" ng-model="formInfo['new-email']">
+                <input type="text" class="form-control" placeholder="Email" name="new-email" ng-model="newUser['email']" ng-pattern="/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/"  required>
               </div>
 
               <div class="form-group" id="inputPassword">
+
+                <div ng-show="showError(newUserForm['new-password'], 'minlength')" class="help-inline">Минимальная длина пароля 6 символов</div>
+                <div ng-show="showError(newUserForm['new-password'], 'maxlength')" class="help-inline">Пароль привышает максимальный размер</div>
+                <div ng-show="showError(newUserForm['new-password'], 'required')" class="info-inline">Пароль (обязателен для заполнения)</div>
+
                 <label class="sr-only" for="inputPassword">Пароль</label>
-                <input type="password" class="form-control" placeholder="Password" name="password" ng-model="formInfo['new-password']">
+                <input type="password" class="form-control" placeholder="Password" name="new-password" ng-model="newUser['password']" id="password" ng-minlength="6" ng-maxlength="64" required>
+
               </div>
 
-              <div class="form-group" id="inputPassword">
-                    <input type="file" file-model="myFile"/>
+              <div class="form-group" id="inputName">
+
+                <div ng-show="showError(newUserForm['new-name'], 'minlength')" class="help-inline">Минимальная длина имени 3 символа</div>
+                <div ng-show="showError(newUserForm['new-name'], 'maxlength')" class="help-inline">Имя привышает максимальный размер</div>
+                <div ng-show="showError(newUserForm['new-name'], 'required')" class="info-inline">Имя (обязательно для заполнения)</div>
+
+                <label class="sr-only" for="inputEmail">Имя</label>
+                <input type="text" class="form-control" placeholder="Имя" name="new-name" ng-model="newUser['name']" ng-minlength="3" ng-maxlength="64" required>
               </div>
 
+              <div class="form-group" id="inputFile">
+              <span ng-bind="errorFileMess" class="help-inline"></span>
+                    <input type="file" ng-model="myFile" name="new-file">
+              </div>
 
-              <button type="submit" class="btn btn-default" ng-click="chek()">Подтвердить</button>
+              <button type="submit" class="btn btn-default" ng-click="createNewUser()">Подтвердить</button>
 
-              <button class="btn btn-default" data-dismiss="modal" ng-click="loginClick($event, userEmail, userPassword, $event)">Отмена</button>
+              <button class="btn btn-default" id="creatUser" data-dismiss="modal" ng-click="loginClick($event, userEmail, userPassword, $event)">Отмена</button>
+              <pre ng-bind="newUser | json"></pre>
             </form>
 
           </div>

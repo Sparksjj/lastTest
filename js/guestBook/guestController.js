@@ -1,4 +1,4 @@
-app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http',"getRequests", "postRequests","validateForm", "deleteRequest",
+app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http',"getRequests", "postRequests", "validateForm", "deleteRequest",
 	function($scope, authorizationFactory, $http, getRequests, postRequests, validateForm, deleteRequest) { 
   
 
@@ -10,7 +10,7 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
   }
 
 
- $http({
+$http({
   method: 'GET',
   url: 'http://push.cpl.by/api/v1/comment/2/answer?api_token=UU9quUHYgR84bT1LusQw',
   data: {'api_token': 'UU9quUHYgR84bT1LusQw'}
@@ -20,21 +20,10 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
       //do sms an error
 });  
 
-
-
-
-getRequests.getUsers().then(function(responce){
-      $scope.users = responce.data;
-    }, function(){
-      //do sms an error
-});  
-
-
 $scope.chekMessages = function(){
   getRequests.getMessages($scope.timestamp.messages).then(function(responce){
     /*север периодически отдает текст ошибки о таймауте запросса*/
     try{    
-      console.log(responce)
       $scope.messages = responce.data; 
 
       $scope.messages.data.forEach(function(elem){
@@ -60,12 +49,11 @@ $scope.chekMessages = function(){
 }
 $scope.chekMessages()
 
-/*проверяем метку времени на сервере, если не совпадает => файл изменен обновляем*/
 
 	
-
+/*send message and answer*/
   $scope.sendNewMessage = function($event , type){
-console.log(type);
+
     var chek = validateForm.validateMessAnsw($event, type) //return false if invalid or mess/answ obj data
 
   	if (!chek){
@@ -76,8 +64,16 @@ console.log(type);
       
   		postRequests.postMessage({"title": chek.titleText, "message": chek.messageText, "api_token": authorizationFactory.currentUser().token})
   			.then(function(response){
+          
+        /*compile corrent data*/
+        var data = response.data;
+        data.user = authorizationFactory.currentUser();
+        data.comment_id = data.id;
 
-  			$scope.chekMessages()
+        /*add message*/
+        $scope.messages.data.push(response.data);
+
+  		  /*$scope.chekMessages() //*/
 
     		chek.titleForm.find("input").val('')
     		chek.messageForm.find("textarea").val('');
@@ -89,9 +85,11 @@ console.log(type);
     	var messId   = chek.form.parent().prev().prev().attr("data-message-id");
   		postRequests.postAnswer({"api_token": authorizationFactory.currentUser().token, "message": chek.messageText}, messId)
   			.then(function(response){
-          $scope.chekMessages()
-  		}, function(err){
 
+          $scope.answers.push(response.data);
+          /*$scope.chekMessages()*/
+  		}, function(err){
+        
       })
 
     };
@@ -123,32 +121,41 @@ console.log(type);
     return false
   }
 
+
   $scope.destroyMess = function($event){
     var button = $($event)
     var id = $($event.target).parent().parent().next().attr("data-message-id");
     
+    /*chek if message has answer*/
     getRequests.getAnswer(id).then(function(response){
       
       if(response.data.length > 0){
-        var i = 0;
-
+    
+        /*true. add flash message or sms*/
 
 
       }else{
         deleteRequest.deleteMessage(id, authorizationFactory.currentUser().token).then(function(responce){
-          $scope.chekMessages()
+          console.log($scope.messages);
+
+          /*false. delete message from messages.data*/
+          for (var i = $scope.messages.data.length - 1; i >= 0; i--) {
+
+            if ($scope.messages.data[i].comment_id == id) {
+              $scope.messages.data.splice(i, 1);
+              return;
+            };
+
+          };
+
+         /* $scope.chekMessages()*/
         }, function(err){
-
-        })
+          /*if error its mean user doesn't refresh page for a long time and admin send message*/
+          /*refrehs data*/
+          $scope.chekMessages()
+        });
       };
-    })
-
-
-/*    deleteRequest.deleteMessage(id, authorizationFactory.currentUser().token).then(function(responce){
-
-    }, function(err){
-
-    })*/
+    });
   }
 
 
@@ -157,9 +164,21 @@ console.log(type);
     var messageId = $($event.target).parent().siblings(".message").attr("data-message-id");
     
       deleteRequest.deleteAnswer(messageId, answerId, authorizationFactory.currentUser().token).then(function(responce){
-          $scope.chekMessages()
-        }, function(err){
 
+          console.log($scope.answers);
+          for (var i = $scope.answers.length - 1; i >= 0; i--) {
+
+            if ($scope.answers[i].id == answerId) {
+              $scope.answers.splice(i, 1);
+              return;
+            };
+
+          };
+
+          /*$scope.chekMessages()*/
+        }, function(err){
+          /*If sheat hapens refresh data :) */
+          $scope.chekMessages()
       })
 
   }

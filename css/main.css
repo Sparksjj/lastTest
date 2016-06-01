@@ -1,3 +1,21 @@
+/*.ng-pristine { border: solid black 1px; }
+.ng-dirty { border: solid black 3px; }*/
+/*.ng-valid.ng-dirty { border: solid green 3px; }
+.ng-invalid.ng-dirty { border: solid red 3px; }*/
+.help-inline { 
+	padding-left: 10px;
+	text-align: left;
+	margin-bottom: 5px;
+	color: red;
+}
+.info-inline { 	
+	padding-left: 10px;
+	text-align: left;
+	margin-bottom: 5px;
+	color: #4B5658;
+}
+
+.success { border: dotted  green 1px }
 
 /* header */
 #chek-user{

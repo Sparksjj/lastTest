@@ -1,4 +1,4 @@
-var app = angular.module("myApp", ['ngRoute', 'angularUtils.directives.dirPagination', 'angularFileUpload']);
+var app = angular.module("myApp", ['ngRoute', 'angularUtils.directives.dirPagination']);
 
   app.config(function($routeProvider) {
       $routeProvider
@@ -14,34 +14,12 @@ var app = angular.module("myApp", ['ngRoute', 'angularUtils.directives.dirPagina
             redirectTo: '/'
           });
   });
-/*  
-app.config(['$httpProvider', function($httpProvider) {
-$httpProvider.defaults.useXDomain = true;
-$httpProvider.defaults.withCredentials = true;
-delete $httpProvider.defaults.headers.common["X-Requested-With"];
-    }
-]);*/
+
 app.controller('appCtrl', ['$scope', '$location', '$userProvider', "$http",
     function($scope, $location, $userProvider, $http) {
 
 
     }]);
-
-app.directive('fileModel', ['$parse', function ($parse) {
-    return {
-        restrict: 'A',
-        link: function(scope, element, attrs) {
-            var model = $parse(attrs.fileModel);
-            var modelSetter = model.assign;
-            
-            element.bind('change', function(){
-                scope.$apply(function(){
-                    modelSetter(scope, element[0].files[0]);
-                });
-            });
-        }
-    };
-}]);
 
 app.service('fileUpload', ['$http', function ($http) {
     this.uploadFileToUrl = function(file, email, password, name){
@@ -51,7 +29,7 @@ app.service('fileUpload', ['$http', function ($http) {
         formData.append("email", email)
         formData.append("name", name)
         formData.append("password", password)
-
+/*
       $.ajax({
         type: "POST",
         processData: false,
@@ -61,24 +39,15 @@ app.service('fileUpload', ['$http', function ($http) {
       })
       .done(function( data ) {
                        
-      });
+      });*/
    
-/*        $http({
-            method: 'POST',
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-            url: 'http://push.cpl.by/auth/register',
-          
-            data: {
-              filee: file
-            },
-            
-        }).then(function(response){
-          console.log(response);
-        }, function(err){
-
-        })*/
+     return $http({
+          method: 'POST',
+          url: "http://push.cpl.by/auth/register", 
+          transformRequest: angular.identity,        
+          data:  formData ,
+          headers: {'Content-Type': undefined}
+      })
 
     }
 }]);

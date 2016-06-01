@@ -5,9 +5,25 @@ function($scope, authorizationFactory, validateSignIn, $rootScope, fileUpload){
     password: ""
   } 
 
-$('input[type=file]').change(function(){
+  $scope.newUser = {
+    email: "",
+    password: "",
+    name: ""
+  } 
+
+$scope.file;  
+
+/*add file*/
+  $("input[type='file']").change(function(){
     $scope.file = this.files[0];
-});
+  })
+
+
+/*add validate-message for new user*/
+  $scope.showError = function(ngModelController, error) {
+    return ngModelController.$error[error];
+  };
+
 
   $scope.loginClick = function($event) {
 
@@ -19,27 +35,50 @@ $('input[type=file]').change(function(){
 
   }
 
-  $scope.chek = function(){
 
-      var file = $scope.myFile;
-      console.log('file is ' );
-      console.dir(file);
-      var uploadUrl = "/fileUpload";/*
-      console.log($scope.formInfo['new-email']);
-      console.log($scope.formInfo['new-password']);
-      console.log($scope.formInfo['new-name']);
-*/
-      fileUpload.uploadFileToUrl(file, $scope.formInfo['new-email'], $scope.formInfo['new-password'], $scope.formInfo['new-name']);
+  $scope.createNewUser = function(){
+
+   if ($scope.newUserForm.$invalid) {
+    return;
+   }else{
+    var fileMessage = validateSignIn.chekFile($scope.file)
+    if (fileMessage) {
+      $scope.errorFileMess = fileMessage;
+      return;
+    };
+    $scope.errorFileMess = "";
+   }; 
+
+    fileUpload.uploadFileToUrl($scope.file, $scope.newUser['email'], $scope.newUser['password'], $scope.newUser['name']).then(function(res){
+
+      authorizationFactory.loginNewUser(res.data)
+      
+      $scope.newUser = {
+        email: "",
+        password: "",
+        name: ""
+      } 
+    $("input[type='file']")[0].value="";
+
+    }, function(err){
+
+      $scope.serverError = "Пользовaтель с таким email уже существует";
+      $scope.newUser.email =""
+      $scope.newUser.password =""
+      
+    });
+
   }
 
   $scope.logOutClick = function($event){
     authorizationFactory.logOut();    
   }
 
+
   $scope.isAdmin = authorizationFactory.isAdmin;
   $scope.isSignedIn = authorizationFactory.isSignedIn;
-  $scope.currentUser = authorizationFactory.currentUser();
   $scope.hiMessage = authorizationFactory.sayHi();
+  $scope.currentUser = authorizationFactory.currentUser();
 
 /*событие при успешной авторизации*/
   $rootScope.$on('rootScope.signInSuccess', function() {
@@ -55,5 +94,6 @@ $('input[type=file]').change(function(){
       $('button.close').trigger('click');
       $scope.hiMessage = authorizationFactory.sayHi();
   });
+
 
 }]);
