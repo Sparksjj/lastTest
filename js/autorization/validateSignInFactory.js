@@ -45,7 +45,7 @@ app.factory('validateSignIn', function(){
 	}
 
 	var	chekFile = function(file){
-		allowFormats = ["image/jpeg", "image/bpn", "image/png"];
+		allowFormats = ["image/jpeg", "image/bmp", "image/png"];
 
 /*    console.log(allowFormats.indexOf($scope.file.type));*/
     	if (!file) {

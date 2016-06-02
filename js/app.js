@@ -20,35 +20,3 @@ app.controller('appCtrl', ['$scope', '$location', '$userProvider', "$http",
 
 
     }]);
-
-app.service('fileUpload', ['$http', function ($http) {
-    this.uploadFileToUrl = function(file, email, password, name){
-
-        var formData = new FormData();
-        formData.append("avatar", file)
-        formData.append("email", email)
-        formData.append("name", name)
-        formData.append("password", password)
-/*
-      $.ajax({
-        type: "POST",
-        processData: false,
-        contentType: false,
-        url: "http://push.cpl.by/auth/register",
-        data:  formData 
-      })
-      .done(function( data ) {
-                       
-      });*/
-   
-     return $http({
-          method: 'POST',
-          url: "http://push.cpl.by/auth/register", 
-          transformRequest: angular.identity,        
-          data:  formData ,
-          headers: {'Content-Type': undefined}
-      })
-
-    }
-}]);
-

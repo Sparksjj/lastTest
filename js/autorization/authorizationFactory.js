@@ -23,14 +23,31 @@ app.factory('authorizationFactory',['$userProvider', '$http', 'validateSignIn', 
       
     }   
 
+    var sendNewUser = function(file, email, password, name){
+
+        var formData = new FormData();
+        formData.append("avatar", file)
+        formData.append("email", email)
+        formData.append("name", name)
+        formData.append("password", password)
+
+   
+     return $http({
+          method: 'POST',
+          url: "http://push.cpl.by/auth/register", 
+          transformRequest: angular.identity,        
+          data:  formData ,
+          headers: {'Content-Type': undefined}
+      })
+
+    }
+
     var loginNewUser = function(data){
         
         if (data.is_admin == 1) {
-          console.log("ad");
-            $userProvider.setUser({id: data.id, login: data.name, email: data.email, roles: $userProvider.rolesEnum.admin, token: data.api_token});
+            $userProvider.setUser({avatar: data.avatar, id: data.id, name: data.name, email: data.email, roles: $userProvider.rolesEnum.admin, token: data.api_token});
           }else{
-            console.log("us");
-            $userProvider.setUser({id: data.id, login: data.name, email: data.email, roles: $userProvider.rolesEnum.user, token: data.api_token});
+            $userProvider.setUser({avatar: data.avatar, id: data.id, name: data.name, email: data.email, roles: $userProvider.rolesEnum.user, token: data.api_token});
           };
           $rootScope.$emit('rootScope.signInSuccess');
 
@@ -80,7 +97,8 @@ app.factory('authorizationFactory',['$userProvider', '$http', 'validateSignIn', 
       isSignedIn:   isSignedIn,
       currentUser:  currentUser,
       sayHi:        sayHi,
-      loginNewUser: loginNewUser
+      loginNewUser: loginNewUser,
+      sendNewUser: sendNewUser
     }
 
 }]);

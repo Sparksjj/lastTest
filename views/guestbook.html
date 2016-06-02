@@ -6,7 +6,7 @@
   
   <new-message></new-message>
 
-  <div class="message-wrapper" dir-paginate="mess in messages.data | orderBy: messages : !reverse | itemsPerPage: 5">
+  <div class="message-wrapper" dir-paginate="mess in messages.data | orderBy: messages : reverse | itemsPerPage: itemsPerPage()">
         
     <message></message>
 

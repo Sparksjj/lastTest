@@ -12,7 +12,7 @@ app.factory("postRequests", function($http){
     },
 
     postAnswer: function(answerData, messId){
-    	console.log(messId);
+    	
       return $http({
       	method: "POST",
       	url: 'http://push.cpl.by/api/v1/comment/'+messId+'/answer',

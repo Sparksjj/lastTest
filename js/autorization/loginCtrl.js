@@ -1,5 +1,5 @@
-app.controller('loginCtrl', ['$scope', 'authorizationFactory', 'validateSignIn', '$rootScope', 'fileUpload',
-function($scope, authorizationFactory, validateSignIn, $rootScope, fileUpload){
+app.controller('loginCtrl', ['$scope', 'authorizationFactory', 'validateSignIn', '$rootScope', 
+function($scope, authorizationFactory, validateSignIn, $rootScope){
   $scope.formInfo = {
     email: "",
     password: ""
@@ -11,7 +11,7 @@ function($scope, authorizationFactory, validateSignIn, $rootScope, fileUpload){
     name: ""
   } 
 
-$scope.file;  
+  $scope.file;  
 
 /*add file*/
   $("input[type='file']").change(function(){
@@ -35,7 +35,6 @@ $scope.file;
 
   }
 
-
   $scope.createNewUser = function(){
 
    if ($scope.newUserForm.$invalid) {
@@ -49,7 +48,7 @@ $scope.file;
     $scope.errorFileMess = "";
    }; 
 
-    fileUpload.uploadFileToUrl($scope.file, $scope.newUser['email'], $scope.newUser['password'], $scope.newUser['name']).then(function(res){
+    authorizationFactory.sendNewUser($scope.file, $scope.newUser['email'], $scope.newUser['password'], $scope.newUser['name']).then(function(res){
 
       authorizationFactory.loginNewUser(res.data)
       

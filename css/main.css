@@ -2,6 +2,8 @@
 .ng-dirty { border: solid black 3px; }*/
 /*.ng-valid.ng-dirty { border: solid green 3px; }
 .ng-invalid.ng-dirty { border: solid red 3px; }*/
+
+/*validate*/
 .help-inline { 
 	padding-left: 10px;
 	text-align: left;
@@ -14,9 +16,17 @@
 	margin-bottom: 5px;
 	color: #4B5658;
 }
-
 .success { border: dotted  green 1px }
 
+
+/*haveAnswerMessage*/
+
+.haveAnswerMessage{
+	position: absolute;
+	right: 40px;
+	top: 8px;
+	color: #4B5658;
+}
 /* header */
 #chek-user{
 	background-color: #4B5658;

@@ -1,7 +1,7 @@
 app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http',"getRequests", "postRequests", "validateForm", "deleteRequest",
 	function($scope, authorizationFactory, $http, getRequests, postRequests, validateForm, deleteRequest) { 
   
-
+  $scope.haveAnswerMessage == "";
   $scope.messages =[];
   $scope.answers =[];
   $scope.timestamp = {
@@ -10,7 +10,7 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
   }
 
 
-$http({
+/*$http({
   method: 'GET',
   url: 'http://push.cpl.by/api/v1/comment/2/answer?api_token=UU9quUHYgR84bT1LusQw',
   data: {'api_token': 'UU9quUHYgR84bT1LusQw'}
@@ -18,14 +18,14 @@ $http({
       console.log(responce.data);
     }, function(){
       //do sms an error
-});  
+});  */
 
 $scope.chekMessages = function(){
   getRequests.getMessages($scope.timestamp.messages).then(function(responce){
     /*север периодически отдает текст ошибки о таймауте запросса*/
     try{    
       $scope.messages = responce.data; 
-
+      
       $scope.messages.data.forEach(function(elem){
 
          getRequests.getAnswer(elem.comment_id).then(function(responce){
@@ -71,7 +71,7 @@ $scope.chekMessages()
         data.comment_id = data.id;
 
         /*add message*/
-        $scope.messages.data.push(response.data);
+        $scope.messages.data.unshift(response.data);
 
   		  /*$scope.chekMessages() //*/
 
@@ -123,8 +123,8 @@ $scope.chekMessages()
 
 
   $scope.destroyMess = function($event){
-    var button = $($event)
-    var id = $($event.target).parent().parent().next().attr("data-message-id");
+    var button = $($event.target)
+    var id = button.parent().parent().next().attr("data-message-id");
     
     /*chek if message has answer*/
     getRequests.getAnswer(id).then(function(response){
@@ -132,12 +132,18 @@ $scope.chekMessages()
       if(response.data.length > 0){
     
         /*true. add flash message or sms*/
-
+        if (!$scope.haveAnswerMessage) {
+          $scope.haveAnswerMessage = $("<div class='haveAnswerMessage'>Уже есть ответ</div>");
+          $scope.haveAnswerMessage.prependTo(button.parent().parent().parent());
+          setTimeout(function(){
+            $scope.haveAnswerMessage.remove()
+            $scope.haveAnswerMessage = ""
+          }, 2000);
+        };
 
       }else{
         deleteRequest.deleteMessage(id, authorizationFactory.currentUser().token).then(function(responce){
-          console.log($scope.messages);
-
+        
           /*false. delete message from messages.data*/
           for (var i = $scope.messages.data.length - 1; i >= 0; i--) {
 
@@ -165,7 +171,6 @@ $scope.chekMessages()
     
       deleteRequest.deleteAnswer(messageId, answerId, authorizationFactory.currentUser().token).then(function(responce){
 
-          console.log($scope.answers);
           for (var i = $scope.answers.length - 1; i >= 0; i--) {
 
             if ($scope.answers[i].id == answerId) {
@@ -183,11 +188,13 @@ $scope.chekMessages()
 
   }
 
-
   $scope.hasAnswer = function(){
     if (true) {};
   }
 
   $scope.isAdmin = authorizationFactory.isAdmin;
   $scope.isSignedIn = authorizationFactory.isSignedIn;
+  $scope.itemsPerPage= function(){
+    return $scope.messages.per_page;
+  }
 }]);
