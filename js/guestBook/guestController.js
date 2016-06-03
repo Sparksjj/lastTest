@@ -10,6 +10,43 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
   }
 
 
+
+
+  var messageSocet = io.connect('http://push.cpl.by:8890');
+  messageSocet.on('message', function (data) {
+    var messageInfo = JSON.parse(data);
+    var userId = messageInfo.comment.user_id
+ /*   if ( userId != authorizationFactory.currentUser().id) {
+
+        //compile corrent data
+        var data = messageInfo.message;
+        data.user = messageInfo.user;
+
+        //add message
+        $scope.messages.data.unshift(data);
+
+    };*/
+            /*compile corrent data*/
+        var data = messageInfo.comment;
+        data.user = messageInfo.user;
+        data.comment_id = messageInfo.comment.id
+        /*add message*/
+        
+        $scope.messages.data.unshift(data);
+        console.log($scope.messages);  
+          
+  });
+
+  var messageSocet = io.connect('http://push.cpl.by:8890');
+  messageSocet.on('answer', function (data) {
+    
+  });
+
+  var broadcastSocet = io.connect('http://push.cpl.by:8890');
+  broadcastSocet.on('broadcast', function (data) {
+    
+  });
+
 /*$http({
   method: 'GET',
   url: 'http://push.cpl.by/api/v1/comment/2/answer?api_token=UU9quUHYgR84bT1LusQw',
@@ -23,24 +60,30 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
 $scope.chekMessages = function(){
   getRequests.getMessages($scope.timestamp.messages).then(function(responce){
     /*север периодически отдает текст ошибки о таймауте запросса*/
-    try{    
-      $scope.messages = responce.data; 
-      
-      $scope.messages.data.forEach(function(elem){
+$scope.messages = responce.data
+       
+    /*  if ( responce.data.current_page == 1 ) {
+        $scope.messages = responce.data;
+      } else if ( responce.data.current_page != responce.data.last_page) {
+        $scope.messages.push(responce.data.data)
+        $scope.chekMessages()
+      }else{*/
 
-         getRequests.getAnswer(elem.comment_id).then(function(responce){
 
-                if(responce.data[0]) {
-                  $scope.answers.push(responce.data[0])
-                };
-              }, function(){
-                //do sms an error
+          $scope.messages.data.forEach(function(elem){
+
+             getRequests.getAnswer(elem.comment_id).then(function(responce){
+
+                   if(responce.data[0]) {
+                     $scope.answers.push(responce.data[0])
+                   };
+                  }, function(){
+                    //do sms an error
+              })
           })
-      })
-      $scope.answers =[];
-    }catch(e){      
-      /*$scope.chekMessages();*/
-    }
+          $scope.answers =[];
+
+    /*  };*/
 
     }, function(){
       //do sms an error
@@ -68,8 +111,8 @@ $scope.chekMessages()
         /*compile corrent data*/
         var data = response.data;
         data.user = authorizationFactory.currentUser();
-        data.comment_id = data.id;
-
+        data.comment_id = data.id; 
+        
         /*add message*/
         $scope.messages.data.unshift(response.data);
 
