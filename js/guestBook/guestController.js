@@ -1,96 +1,109 @@
-app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http',"getRequests", "postRequests", "validateForm", "deleteRequest",
-	function($scope, authorizationFactory, $http, getRequests, postRequests, validateForm, deleteRequest) { 
+app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http',"getRequests", "postRequests", "validateForm", "deleteRequest", "$rootScope", "socket", "socetRequest",
+	function($scope, authorizationFactory, $http, getRequests, postRequests, validateForm, deleteRequest, $rootScope, socket, socetRequest) { 
   
   $scope.haveAnswerMessage == "";
   $scope.messages =[];
   $scope.answers =[];
-  $scope.timestamp = {
-    messages: 0,
-    answers: 0
-  }
 
+  window.onblur   = function () {$scope.active=false}
+  window.onfocus  = function () {$scope.active=true}
 
+  socket.on('message', function (data) {
 
-
-  var messageSocet = io.connect('http://push.cpl.by:8890');
-  messageSocet.on('message', function (data) {
-    var messageInfo = JSON.parse(data);
-    var userId = messageInfo.comment.user_id
- /*   if ( userId != authorizationFactory.currentUser().id) {
-
-        //compile corrent data
-        var data = messageInfo.message;
-        data.user = messageInfo.user;
-
-        //add message
-        $scope.messages.data.unshift(data);
-
-    };*/
-            /*compile corrent data*/
-        var data = messageInfo.comment;
-        data.user = messageInfo.user;
-        data.comment_id = messageInfo.comment.id
-        /*add message*/
-        
-        $scope.messages.data.unshift(data);
-        console.log($scope.messages);  
-          
-  });
-
-  var messageSocet = io.connect('http://push.cpl.by:8890');
-  messageSocet.on('answer', function (data) {
+    var messageData = angular.fromJson(data);
     
+    switch (messageData.action){
+
+      case "comment_added":
+        var newMessage = socetRequest.addMessage(messageData, $scope.active); 
+        if (newMessage) {
+          $scope.messages.data.unshift(newMessage);
+        }
+      break;
+
+      case "answer_added":      
+        if (!$scope.hasAnswer(messageData.answer_id)) {
+          $scope.answers.push(messageData.answer);
+        };        
+      break;
+
+      case "answer_deleted":
+
+        for (var i = $scope.answers.length - 1; i >= 0; i--) {
+          if ($scope.answers[i].id == messageData.answer_id) {
+            $scope.answers.splice(i, 1);
+            return;
+          };
+        };
+
+      break;
+
+      case "comment_delete":
+
+        for (var i = $scope.messages.data.length - 1; i >= 0; i--) {
+          if ($scope.messages.data[i].comment_id == messageData.comment_id) {
+            $scope.messages.data.splice(i, 1);
+            return;
+          };
+        };
+
+      break;
+
+    }
+
   });
 
-  var broadcastSocet = io.connect('http://push.cpl.by:8890');
-  broadcastSocet.on('broadcast', function (data) {
+  socket.on('broadcast', function (data) {
+
+    var broadcastData = angular.fromJson(data);
     
+    noty({
+      theme: 'bootstrapTheme',
+      layout: 'bottomRight',
+      text: broadcastData.url,
+      closeWith   : ['button'],
+      template: '<div class="noty_message"><a href="'+broadcastData.url+'" target="_blank"><span class="noty_text"></a></span><div class="noty_close"></div></div>',
+    });
+
   });
 
-/*$http({
-  method: 'GET',
-  url: 'http://push.cpl.by/api/v1/comment/2/answer?api_token=UU9quUHYgR84bT1LusQw',
-  data: {'api_token': 'UU9quUHYgR84bT1LusQw'}
-}).then(function(responce){
-      console.log(responce.data);
-    }, function(){
-      //do sms an error
-});  */
-
-$scope.chekMessages = function(){
-  getRequests.getMessages($scope.timestamp.messages).then(function(responce){
+$scope.chekMessages = function(url){
+  getRequests.getMessages(url).then(function(responce){
     /*север периодически отдает текст ошибки о таймауте запросса*/
-$scope.messages = responce.data
        
-    /*  if ( responce.data.current_page == 1 ) {
+      if ( responce.data.current_page == 1 ) {
         $scope.messages = responce.data;
+        if (responce.data.last_page > 1) {
+          $scope.chekMessages(responce.data.next_page_url+'&api_token=UU9quUHYgR84bT1LusQw')
+        }
       } else if ( responce.data.current_page != responce.data.last_page) {
-        $scope.messages.push(responce.data.data)
-        $scope.chekMessages()
-      }else{*/
 
+          $scope.messages.data = $scope.messages.data.concat(responce.data.data)
+
+        $scope.chekMessages(responce.data.next_page_url+'&api_token=UU9quUHYgR84bT1LusQw')
+      }else{
+        
+        $scope.messages.data = $scope.messages.data.concat(responce.data.data)        
 
           $scope.messages.data.forEach(function(elem){
 
              getRequests.getAnswer(elem.comment_id).then(function(responce){
 
                    if(responce.data[0]) {
-                     $scope.answers.push(responce.data[0])
+                     $scope.answers.push(responce.data[0])          
                    };
                   }, function(){
                     //do sms an error
               })
           })
           $scope.answers =[];
-
-    /*  };*/
+      };
 
     }, function(){
       //do sms an error
   });
-
 }
-$scope.chekMessages()
+$scope.chekMessages('http://push.cpl.by/api/v1/comment?api_token=UU9quUHYgR84bT1LusQw')
 
 
 	
@@ -103,7 +116,7 @@ $scope.chekMessages()
       return
     };
 
-    if (type == "new-mess" && authorizationFactory.currentUser()) {    	
+    if (type == "new-mess" && authorizationFactory.currentUser()) {	
       
   		postRequests.postMessage({"title": chek.titleText, "message": chek.messageText, "api_token": authorizationFactory.currentUser().token})
   			.then(function(response){
@@ -129,7 +142,7 @@ $scope.chekMessages()
   		postRequests.postAnswer({"api_token": authorizationFactory.currentUser().token, "message": chek.messageText}, messId)
   			.then(function(response){
 
-          $scope.answers.push(response.data);
+          
           /*$scope.chekMessages()*/
   		}, function(err){
         
@@ -201,7 +214,7 @@ $scope.chekMessages()
         }, function(err){
           /*if error its mean user doesn't refresh page for a long time and admin send message*/
           /*refrehs data*/
-          $scope.chekMessages()
+          $scope.chekMessages('http://push.cpl.by/api/v1/comment?api_token=UU9quUHYgR84bT1LusQw')
         });
       };
     });
@@ -226,13 +239,18 @@ $scope.chekMessages()
           /*$scope.chekMessages()*/
         }, function(err){
           /*If sheat hapens refresh data :) */
-          $scope.chekMessages()
+          $scope.chekMessages('http://push.cpl.by/api/v1/comment?api_token=UU9quUHYgR84bT1LusQw')
       })
 
   }
 
-  $scope.hasAnswer = function(){
-    if (true) {};
+  $scope.hasAnswer = function(id){
+    for (var i = $scope.answers.length - 1; i >= 0; i--) {
+      if ($scope.answers[i].id == id) {
+        return true
+      }
+    }
+    return false;
   }
 
   $scope.isAdmin = authorizationFactory.isAdmin;

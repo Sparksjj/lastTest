@@ -8,10 +8,10 @@ app.factory("getRequests", function($http){
       return $http.get('data/users.json').then(Scallback, Ecallback);
     },
 
-    getMessages: function(){
+    getMessages: function(url){
       return  $http({
                 method: 'GET',
-                url: 'http://push.cpl.by/api/v1/comment?api_token=UU9quUHYgR84bT1LusQw',
+                url: url,
                 data: {'api_token': 'UU9quUHYgR84bT1LusQw'}
               })
     },
