@@ -60,7 +60,7 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
     noty({
       theme: 'bootstrapTheme',
       layout: 'bottomRight',
-      text: broadcastData.url,
+      text: broadcastData.text,
       closeWith   : ['button'],
       template: '<div class="noty_message"><a href="'+broadcastData.url+'" target="_blank"><span class="noty_text"></a></span><div class="noty_close"></div></div>',
     });
