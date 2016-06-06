@@ -8,7 +8,8 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
   window.onblur   = function () {$scope.active=false}
   window.onfocus  = function () {$scope.active=true}
 
-  socket.on('message', function (data) {
+  var messSocet = socket.socket('http://push.cpl.by:8890')
+  socket.on(messSocet, 'message', function (data) {
 
     var messageData = angular.fromJson(data);
     
@@ -53,7 +54,8 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
 
   });
 
-  socket.on('broadcast', function (data) {
+  var broadcastSocet = socket.socket('http://push.cpl.by:8890')
+  socket.on(broadcastSocet, 'broadcast', function (data) {
 
     var broadcastData = angular.fromJson(data);
     

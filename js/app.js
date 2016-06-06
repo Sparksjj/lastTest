@@ -23,9 +23,14 @@ app.controller('appCtrl', ['$scope', '$location', '$userProvider', "$http",
 
 
 app.factory('socket', function ($rootScope) {
-  var socket = io.connect('http://push.cpl.by:8890');
+
+  
   return {
-    on: function (eventName, callback) {
+    socket: function(http){
+      return io.connect(http);
+    },
+
+    on: function (socket, eventName, callback) {
       socket.on(eventName, function () {  
         var args = arguments;
         $rootScope.$apply(function () {
@@ -33,7 +38,7 @@ app.factory('socket', function ($rootScope) {
         });
       });
     },
-    emit: function (eventName, data, callback) {
+    emit: function (socket, eventName, data, callback) {
       socket.emit(eventName, data, function () {
         var args = arguments;
         $rootScope.$apply(function () {
