@@ -3,6 +3,7 @@
 /*.ng-valid.ng-dirty { border: solid green 3px; }
 .ng-invalid.ng-dirty { border: solid red 3px; }*/
 
+
 /*validate*/
 .help-inline { 
 	padding-left: 10px;
@@ -134,7 +135,7 @@
 
 
 #messages-wrapper > .message-wrapper{
-	margin: 5px 0 0 10px;
+	margin: 0px 0 0 10px;
 	padding: 10px 5px;
 }
 

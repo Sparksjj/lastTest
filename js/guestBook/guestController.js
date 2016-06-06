@@ -1,5 +1,5 @@
-app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http',"getRequests", "postRequests", "validateForm", "deleteRequest", "$rootScope", "socket", "socetRequest", '$timeout',
-	function($scope, authorizationFactory, $http, getRequests, postRequests, validateForm, deleteRequest, $rootScope, socket, socetRequest, timeout) { 
+app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http',"getRequests", "postRequests", "validateForm", "deleteRequest", "$rootScope", "socket", "socetRequest", '$timeout',"$animate",
+	function($scope, authorizationFactory, $http, getRequests, postRequests, validateForm, deleteRequest, $rootScope, socket, socetRequest, timeout, $animate) { 
   
   $scope.haveAnswerMessage == "";
   $scope.messages =[];
@@ -7,6 +7,7 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
 
   window.onblur   = function () {$scope.active=false};
   window.onfocus  = function () {$scope.active=true};
+
 
   var messSocet = socket.socket('http://push.cpl.by:8890')
   socket.on(messSocet, 'message', function (data) {
@@ -19,12 +20,14 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
         var newMessage = socetRequest.addMessage(messageData, $scope.active); 
         if (newMessage) {
           $scope.messages.data.unshift(newMessage);
+          $scope.addNewMessageAnimate();
         }
       break;
 
       case "answer_added":      
-        if (!$scope.hasAnswer(messageData.answer_id)) {
+        if (!$scope.hasAnswer(messageData.answer.id)) {
           $scope.answers.push(messageData.answer);
+          $scope.addNewAnswerAnimate(messageData.answer.id);
         };        
       break;
 
@@ -64,19 +67,13 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
     var broadcastData = angular.fromJson(data);
     
     var not = noty({
+      theme: "bootstrapTheme",
       timeout: 8000,
       layout: 'bottomRight',
       text: broadcastData.text,
-      type: 'error',
       closeWith   : ['button'],
       template: '<div class="noty_message flash-color"><a href="'+broadcastData.url+'" target="_blank"><span class="noty_text"></a></span><div class="noty_close"></div></div>',
     });
-
-    timeout(function(not){
-      $scope.chengeColor(not)
-    }, 5000)
-   
-
   });
 
 $scope.chekMessages = function(url){
@@ -140,7 +137,7 @@ $scope.chekMessages('http://push.cpl.by/api/v1/comment?api_token=UU9quUHYgR84bT1
         
         /*add message*/
         $scope.messages.data.unshift(response.data);
-
+        $scope.addNewMessageAnimate()
   		  /*$scope.chekMessages() //*/
 
     		chek.titleForm.find("input").val('')
@@ -270,7 +267,36 @@ $scope.chekMessages('http://push.cpl.by/api/v1/comment?api_token=UU9quUHYgR84bT1
   $scope.itemsPerPage= function(){
     return $scope.messages.per_page;
   }
-  $scope.chengeColor = function(not){   
-    $("#"+not.options.id).css('background-color', '#ECE9E4');
+
+  $scope.addNewMessageAnimate = function(){
+    timeout(function(){
+      $(".message-wrapper").eq(0).css("background-color", "#DAD5D2");
+      timeout(function(){
+        $(".message-wrapper").eq(0).css("background-color", "");
+      }, 2000)
+    }, 0)
   }
+
+  $scope.getAnswerForId = function(id){
+
+    var answers = $('.answer');
+    for (var i = answers.length - 1; i >= 0; i--) {
+      if (answers.eq(i).attr('data-answer-id') == id) {
+        return answers.eq(i);
+      };
+    };
+    return answers.eq(0);
+  }
+
+  $scope.addNewAnswerAnimate = function(id){
+
+    timeout(function(){
+      $scope.getAnswerForId(id).css("background-color", "#DAD5D2");
+
+      timeout(function(){
+        $scope.getAnswerForId(id).css("background-color", "");
+      }, 2000)
+    }, 0)
+  }
+
 }]);
