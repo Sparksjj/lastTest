@@ -1,12 +1,12 @@
-app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http',"getRequests", "postRequests", "validateForm", "deleteRequest", "$rootScope", "socket", "socetRequest",
-	function($scope, authorizationFactory, $http, getRequests, postRequests, validateForm, deleteRequest, $rootScope, socket, socetRequest) { 
+app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http',"getRequests", "postRequests", "validateForm", "deleteRequest", "$rootScope", "socket", "socetRequest", '$timeout',
+	function($scope, authorizationFactory, $http, getRequests, postRequests, validateForm, deleteRequest, $rootScope, socket, socetRequest, timeout) { 
   
   $scope.haveAnswerMessage == "";
   $scope.messages =[];
   $scope.answers =[];
 
-  window.onblur   = function () {$scope.active=false}
-  window.onfocus  = function () {$scope.active=true}
+  window.onblur   = function () {$scope.active=false};
+  window.onfocus  = function () {$scope.active=true};
 
   var messSocet = socket.socket('http://push.cpl.by:8890')
   socket.on(messSocet, 'message', function (data) {
@@ -54,18 +54,28 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
 
   });
 
-  var broadcastSocet = socket.socket('http://push.cpl.by:8890')
+  var broadcastSocet = socket.socket('http://push.cpl.by:8890');
   socket.on(broadcastSocet, 'broadcast', function (data) {
+
+    var audio = new Audio();
+    audio.src = "wav/vk.mp3";
+    audio.autoplay = true;
 
     var broadcastData = angular.fromJson(data);
     
-    noty({
-      theme: 'bootstrapTheme',
+    var not = noty({
+      timeout: 8000,
       layout: 'bottomRight',
       text: broadcastData.text,
+      type: 'error',
       closeWith   : ['button'],
-      template: '<div class="noty_message"><a href="'+broadcastData.url+'" target="_blank"><span class="noty_text"></a></span><div class="noty_close"></div></div>',
+      template: '<div class="noty_message flash-color"><a href="'+broadcastData.url+'" target="_blank"><span class="noty_text"></a></span><div class="noty_close"></div></div>',
     });
+
+    timeout(function(not){
+      $scope.chengeColor(not)
+    }, 5000)
+   
 
   });
 
@@ -259,5 +269,8 @@ $scope.chekMessages('http://push.cpl.by/api/v1/comment?api_token=UU9quUHYgR84bT1
   $scope.isSignedIn = authorizationFactory.isSignedIn;
   $scope.itemsPerPage= function(){
     return $scope.messages.per_page;
+  }
+  $scope.chengeColor = function(not){   
+    $("#"+not.options.id).css('background-color', '#ECE9E4');
   }
 }]);
