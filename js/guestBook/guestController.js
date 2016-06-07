@@ -17,7 +17,6 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
         var newMessage = socetRequest.addMessage(messageData); 
         
         if (!$scope.hasMessage(messageData.comment.id)) {
-          console.log(messageData);
           $scope.messages.data.unshift(newMessage);
           $scope.addNewMessageAnimate();
         }
@@ -140,7 +139,6 @@ $scope.chekMessages('http://push.cpl.by/api/v1/comment?api_token=UU9quUHYgR84bT1
   		postRequests.postAnswer({"api_token": authorizationFactory.currentUser().token, "message": chek.messageText}, messId)
   			.then(function(response){
 
-          
           /*$scope.chekMessages()*/
   		}, function(err){
         
@@ -252,8 +250,6 @@ $scope.chekMessages('http://push.cpl.by/api/v1/comment?api_token=UU9quUHYgR84bT1
   }
 
   $scope.hasMessage = function(id){
-    console.log(id);
-    console.log($scope.messages);
     for (var i = $scope.messages.data.length - 1; i >= 0; i--) {
       if ($scope.messages.data.comment_id == id) {
         return true
