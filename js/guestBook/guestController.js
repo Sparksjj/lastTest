@@ -5,9 +5,6 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
   $scope.messages =[];
   $scope.answers =[];
 
-  window.onblur   = function () {$scope.active=false};
-  window.onfocus  = function () {$scope.active=true};
-
 
   var messSocet = socket.socket('http://push.cpl.by:8890')
   socket.on(messSocet, 'message', function (data) {
@@ -17,11 +14,14 @@ app.controller('GuestbookController', ['$scope', 'authorizationFactory', '$http'
     switch (messageData.action){
 
       case "comment_added":
-        var newMessage = socetRequest.addMessage(messageData, $scope.active); 
-        if (newMessage) {
+        var newMessage = socetRequest.addMessage(messageData); 
+        
+        if (!$scope.hasMessage(messageData.comment.id)) {
+          console.log(messageData);
           $scope.messages.data.unshift(newMessage);
           $scope.addNewMessageAnimate();
         }
+
       break;
 
       case "answer_added":      
@@ -120,7 +120,6 @@ $scope.chekMessages('http://push.cpl.by/api/v1/comment?api_token=UU9quUHYgR84bT1
   $scope.sendNewMessage = function($event , type){
 
     var chek = validateForm.validateMessAnsw($event, type) //return false if invalid or mess/answ obj data
-
   	if (!chek){
       return
     };
@@ -129,16 +128,6 @@ $scope.chekMessages('http://push.cpl.by/api/v1/comment?api_token=UU9quUHYgR84bT1
       
   		postRequests.postMessage({"title": chek.titleText, "message": chek.messageText, "api_token": authorizationFactory.currentUser().token})
   			.then(function(response){
-          
-        /*compile corrent data*/
-        var data = response.data;
-        data.user = authorizationFactory.currentUser();
-        data.comment_id = data.id; 
-        
-        /*add message*/
-        $scope.messages.data.unshift(response.data);
-        $scope.addNewMessageAnimate()
-  		  /*$scope.chekMessages() //*/
 
     		chek.titleForm.find("input").val('')
     		chek.messageForm.find("textarea").val('');
@@ -256,6 +245,17 @@ $scope.chekMessages('http://push.cpl.by/api/v1/comment?api_token=UU9quUHYgR84bT1
   $scope.hasAnswer = function(id){
     for (var i = $scope.answers.length - 1; i >= 0; i--) {
       if ($scope.answers[i].id == id) {
+        return true
+      }
+    }
+    return false;
+  }
+
+  $scope.hasMessage = function(id){
+    console.log(id);
+    console.log($scope.messages);
+    for (var i = $scope.messages.data.length - 1; i >= 0; i--) {
+      if ($scope.messages.data.comment_id == id) {
         return true
       }
     }
